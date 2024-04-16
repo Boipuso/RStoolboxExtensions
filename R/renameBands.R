@@ -11,6 +11,9 @@
 #' be subsetted to the renamed bands ("blue", "green", "red", "nir", "swir1", "swir2")
 #' @return Returns the input raster with the renamed band layers. If subsetting = TRUE all other
 #' bands than the renamed ones are removed.
+#'
+#' @importFrom terra subset
+#'
 #' @examples
 #' \dontrun{
 #' your_raster <- terra::rast('path_to_your_raster')
