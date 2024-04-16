@@ -1,0 +1,14 @@
+Package: RStoolboxExtensions
+Title: Functions to Pre- and Postprocess Supervised Classifications
+Version: 0.0.0.9000
+Authors@R: 
+    person("Henning", "Riecken", , "henning.riecken@stud-mail.uni-wuerzburg.de", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: This package offers functions to automise pre-processing steps needed to conduct unsupervised
+             classifications with the "superclass" function of the RStoolbox package. Additionally, post-processing
+             functions to export landcover classes as (multi-)polygons and to mask, crop and export a raster to 
+             the respective landcover classes of the (multi-)polygons are included.
+License: `GPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
