@@ -16,5 +16,13 @@ URL: https://github.com/Boipuso/RStoolboxExtensions
 BugReports: https://github.com/Boipuso/RStoolboxExtensions/issues
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Imports: 
+    terra,
+    sf,
+    RStoolbox,
+    caret,
+    dplyr
+Config/testthat/edition: 3
