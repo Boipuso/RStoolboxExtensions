@@ -6,7 +6,7 @@
 \usage{
 extr_polygons(
   class_img,
-  data_format = ".gpkg",
+  data_format = "gpkg",
   class_col = "class",
   append = FALSE,
   out_dir = "output_polygons"

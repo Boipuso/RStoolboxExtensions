@@ -31,15 +31,41 @@
 
 pp_features <- function(trainFeat, raster) {
 
-  # convert training features to sf if it is not already an sf object
+  # convert training features to sf cause superClass function has problems with sp objects
   if (!inherits(trainFeat, "sf")) {
-    trainFeat <- sf::st_as_sf(trainFeat)
+    message("trainFeat is not a sf object: Converting trainFeat to 'sf' object...")
+    trainFeat <- st_as_sf(trainFeat)
+
+    #check if the transformation worked
+    if (!inherits(trainFeat, "sf")) {
+      stop("trainFeat cannot be converted to a sf object. Provide a data type that can be converted to sf")
+    }
+    else{
+      message("Conversion to sf objected completed")
+    }
+  }
+  else{
+    message("Object is already a sf object")
   }
 
-  # pre-process by trainFeat if needed and renaming response column
+
+  # and bring them to the same crs for the classification to work
   if (!identical(st_crs(trainFeat), st_crs(raster))) {
+    message("CRS mismatch: Transforming trainFeat to match the CRS of the raster...")
     trainFeat <- st_transform(trainFeat, st_crs(raster))
+    #check if the transformation worked
+    if (!identical(st_crs(trainFeat), st_crs(raster))) {
+      stop("CRS of trainFeat cannot be converted to CRS of the raster. Provide fitting types of CRS for the conversion with st_transform()")
+    }
+    else{
+      message("Transformation to raster CRS completed")
+    }
+  }
+  else{
+    message("CRS of trainFeat and raster are already alligned")
   }
 
   return(trainFeat)
 }
+
+

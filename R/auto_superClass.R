@@ -59,13 +59,29 @@ auto_superClass <- function(img,
                   nSamplesV = 50,
                   trainPartition = 0.66) {
 
+  ############################
+  ######Validate inputs#######
+  ############################
 
-  ############################################
-  ####applying raster preprocessing functions##################
-  ############################################
+  # img input validation
+  if (!inherits(img, "SpatRaster")) {
+    stop("Input 'img' must be a SpatRaster object.")
+  }
+
+  # img2 input validation
+  if (!is.null(img2) & !inherits(img2, "SpatRaster")) {
+    stop("Input 'img2' must be a SpatRaster object.")
+  }
+
+
+  #############################################
+  ###applying raster preprocessing functions###
+  #############################################
 
   # check which functions the user wants to apply and apply them to the raster or both rasters if 2 rasters are provided
   if (is.null(img2)) {
+
+    message("Start pre-processing the img ...")
 
     if (rename_bands == TRUE) {
       img_bands <- rename_bands(raster = img, sensor = sensor, subsetting = subsetting)
@@ -80,9 +96,14 @@ auto_superClass <- function(img,
     else if (calc_indices == FALSE) {
       input_raster <- img_bands
     }
+    message("Finished pre-processing the img.")
   }
 
+  # if provided process the second img as well and add suffixes to its band_names to avoid duplicate naming
+  # stack the images for change detection band information
   else if (!is.null(img2)){
+
+    message("Start pre-processing img and img2 ...")
 
     if (rename_bands == TRUE) {
       img_bands <- rename_bands(raster = img, sensor = sensor, subsetting = subsetting)
@@ -96,7 +117,7 @@ auto_superClass <- function(img,
     if (calc_indices == TRUE) {
       input_raster_1 <- calc_indices(raster = img_bands, indices = indices)
       input_raster_2 <- calc_indices(raster = img2_bands, indices = indices)
-      names(input_raster_2) <- paste0(names(input_raster_2), "_2") # make band names distinguishable between raster
+      names(input_raster_2) <- paste0(names(input_raster_2), "_2")
       input_raster <- c(input_raster_1, input_raster_2)
     }
     else if (calc_indices == FALSE) {
@@ -105,23 +126,28 @@ auto_superClass <- function(img,
       names(input_raster_2) <- paste0(names(input_raster_2), "_2")
       input_raster <- c(input_raster_1, input_raster_2)
     }
+
+    message("Finished pre-processing img and img2.")
   }
 
-  ##################################
-  ####applying feature pre processing function
-  ##################################
+  ##############################################
+  ###applying feature preprocessing functions###
+  ##############################################
 
-  #preprocessing using the feature_preProcess_fun function
+  message("Start pre-processing the train_features ...")
   pp_features <- pp_features(trainFeat = train_features,
                              raster = img)
+  message("Finished pre-processing the train_features.")
 
-  ######################################
-  ###conduct superClass function depending on geometry type
-  #######################################
+  ############################################################
+  ###conduct superClass function depending on geometry type###
+  ############################################################
 
   geometry_type <- st_geometry_type(pp_features)
 
-  # Check if it's points
+  # Check the geometry type to chose the correct superClass function and apply it
+  message("Start training the classifier ...")
+
   if (all(geometry_type == "POINT")) {
     superClass <- points_superClass(img = input_raster,
                                     trainPoints = pp_features,
@@ -137,15 +163,22 @@ auto_superClass <- function(img,
                              nSamplesV = nSamplesV,
                              model = model)
   } else {
-    print("The training data consists of mixed geometry types.")
+    stop("The training data consists of mixed geometry types. Provide single type training data (Polygons OR Points).")
   }
+
+  message("Finished training the classifier.")
 
   ##################################
   ####Conduct the classification####
   ##################################
 
+  # extract the trained model from the superClass output list
   superClass_model <- superClass$model
+
+  # conduct the classification
+  message("Start conducting the classification ...")
   superClass_img <- terra::predict(input_raster, superClass_model, na.rm = TRUE)
+  message("Finished conducting the classification .")
 
   # create a list containing the classified image and the accuracy assessment
   output <- list(superClass_img = superClass_img,

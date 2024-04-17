@@ -52,20 +52,21 @@ points_superClass <- function(img,
                               filename = NULL,
                               overwrite = TRUE) {
 
-
+  # set valPoints to NULL if trainPartition is NULL to signalise to the superclass function
+  # that no validation is wanted by the user
   if(is.null(trainPartition)) {
     in_trainPoints <- trainPoints
     valPoints <- NULL
   }
 
-  # Split features between training and validation features if trainPartition is not NULL
+  # split features between training and validation features if trainPartition is not NULL
   else {
     trainPoints$random <- runif(nrow(trainPoints))
     in_trainPoints <- subset(trainPoints, random < trainPartition)
     valPoints <- subset(trainPoints, random >= trainPartition)
   }
 
-  # Train the model
+  # train the model using the superClass function from the RStoolbox
   trained_model <- superClass(img = img,
                               trainData = in_trainPoints,
                               valData = valPoints,

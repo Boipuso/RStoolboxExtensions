@@ -17,7 +17,8 @@ rename_bands(raster, sensor, subsetting = TRUE)
 A raster object with renamed bands.
 }
 \description{
-Renames bands in a raster object according to the specified sensor.
+Renames bands in a raster object according to the specified sensor. The function identifies original band positions for the bands
+Blue, Green, Red, NIR, SWIR1, SWIR2 according to the sensor and names them "Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2".
 }
 \details{
 This function renames bands in a raster object based on the sensor type. Supported sensors and corresponding bands:
@@ -30,7 +31,7 @@ This function renames bands in a raster object based on the sensor type. Support
 
 If \code{subsetting} is set to FALSE, band names are directly replaced without subsetting the raster.
 
-If \code{subsetting} is TRUE (default), the function subsets the raster to include only the bands specified for the sensor and then renames the bands.
+If \code{subsetting} is TRUE (default), the function subsets the raster to include only the renamed bands.
 }
 \examples{
 raster <- terra::rast(blue = rast(matrix(runif(100), nrow = 10)),

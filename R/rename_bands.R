@@ -1,6 +1,7 @@
 #' Rename Bands in a Raster
 #'
-#' Renames bands in a raster object according to the specified sensor.
+#' Renames bands in a raster object according to the specified sensor. The function identifies original band positions for the bands
+#' Blue, Green, Red, NIR, SWIR1, SWIR2 according to the sensor and names them "Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2".
 #'
 #' @param raster A raster object containing bands to be renamed.
 #' @param sensor A character string specifying the sensor type (e.g., "Landsat8", "Sentinel2").
@@ -18,7 +19,7 @@
 #'
 #' If \code{subsetting} is set to FALSE, band names are directly replaced without subsetting the raster.
 #'
-#' If \code{subsetting} is TRUE (default), the function subsets the raster to include only the bands specified for the sensor and then renames the bands.
+#' If \code{subsetting} is TRUE (default), the function subsets the raster to include only the renamed bands.
 #'
 #' @examples
 #' raster <- terra::rast(blue = rast(matrix(runif(100), nrow = 10)),
@@ -34,24 +35,35 @@
 
 rename_bands <- function(raster, sensor, subsetting = TRUE) {
 
+  # stop if no sensor input was given
+  if (missing(sensor)) {
+    stop("Please specify the sensor (e.g., 'Landsat8', 'Landsat7', 'Landsat5', or 'Sentinel2').")
+  }
+
+  # Convert sensor input to lower case to handle case input sensitivity
+  sensor <- tolower(sensor)
+
+  # create string of band names
   band_names <- c("Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2")
 
-  if (sensor == "Landsat8") {
+  # identify band positions for renaming
+  if (sensor == "landsat8") {
     bands <- c(2:7)
   }
-  else if (sensor == "Landsat7") {
+  else if (sensor == "landsat7") {
     bands <- c(1:5, 8)
   }
-  else if (sensor == "Landsat5") {
+  else if (sensor == "landsat5") {
     bands <- c(1:5, 7)
   }
-  else if (sensor == "Sentinel2") {
+  else if (sensor == "sentinel2") {
     bands <- c(2:4, 8, 11:12)
   }
   else {
-    stop("Sensor not supported yet.")
+    stop("Sensor not supported yet. Supported sensors are Landsat5, Landsat7, Landsat8 and Sentinel2.")
   }
 
+  # rename the bands and subset the renamed bands if specified by the user
   if(subsetting == FALSE){
     names(raster[[bands]]) <- band_names
   }
@@ -61,6 +73,5 @@ rename_bands <- function(raster, sensor, subsetting = TRUE) {
   }
   return(raster)
 }
-
 
 

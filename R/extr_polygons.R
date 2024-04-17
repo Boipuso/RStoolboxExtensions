@@ -28,10 +28,20 @@
 #' @export
 
 extr_polygons <- function(class_img,
-                                 data_format = ".gpkg",
-                                 class_col = "class",
-                                 append = FALSE,
-                                 out_dir = "output_polygons") {
+                          data_format = "gpkg",
+                          class_col = "class",
+                          append = FALSE,
+                          out_dir = "output_polygons") {
+
+  # Raster input validation
+  if (!inherits(class_img, "SpatRaster")) {
+    stop("Input 'raster' must be a SpatRaster object.")
+  }
+
+  # Check if 'class_col' exists in the raster colnames
+  if (!(class_col %in% colnames(class_img))) {
+    stop("Specified 'class_col' does not exist in the raster attributes.")
+  }
 
   # Get unique values in the raster
   unique_values <- unique(class_img[[class_col]])
@@ -59,7 +69,7 @@ extr_polygons <- function(class_img,
     sf_polygons <- st_as_sf(polygons)
 
     # Save the polygons as shapefile
-    shapefile_name <- paste0(out_dir,"/", as.character(value),"_polygon", data_format)
+    shapefile_name <- paste0(out_dir,"/", as.character(value),".", data_format)
     st_write(sf_polygons, shapefile_name, append = append)
 
     # Add polygons to the list

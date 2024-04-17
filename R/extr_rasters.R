@@ -36,6 +36,16 @@ extr_rasters <- function(raster,
                          overwrite = TRUE,
                          datatype = "tif") {
 
+  # Raster input validation
+  if (!inherits(raster, "SpatRaster")) {
+    stop("Input 'raster' must be a SpatRaster object.")
+  }
+
+  # Check if polygon_list is a list of polygons or multipolygons
+  if (!all(sapply(polygon_list, function(x) inherits(x, c("Polygon", "MultiPolygon"))))) {
+    stop("Input 'polygon_list' must be a list of polygons or multipolygons.")
+  }
+
   # create empty list to store the results
   masked_raster_list <- list()
 
