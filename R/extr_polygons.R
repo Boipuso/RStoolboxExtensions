@@ -13,25 +13,25 @@
 #' @details This function extracts landcover classes from a classified image represented by a raster object. It loops over unique class labels in the specified column (\code{class_col}) of the raster and converts each class into a binary raster. Then, it converts the binary raster into polygons using the \code{as.polygons} function from the \code{sp} package. The polygons are further converted into sf objects using \code{st_as_sf} from the \code{sf} package and saved as shapefiles or GeoPackages in the specified output directory (\code{out_dir}). The function returns a list of multipolygon sf objects, with each object representing a landcover class.
 #'
 #' @examples
-#' # Load required packages
-#' library(sf)
-#' library(terra)
+#' # load classified sample image of the RStoolboxExtensions package
+#' class_img <- system.file("extdata", "class_img.tif", package = "RStoolboxExtensions")
+#' class_img <- rast_sample_read(class_img)
 #'
-#' # Create a classified image raster
-#' class_img <- rast(matrix(sample(1:3, 100, replace = TRUE), nrow = 10))
+#' # apply the function
+#' class_polygons <- extr_polygons(class_img, out_dir = "test_output_polygons")
 #'
-#' # Extract polygons
-#' extr_polygons(class_img)
+#' # the function returns a list of the (multi-)polygons
+#' View(class_polygons)
 #'
 #' @import terra
 #' @import sf
 #' @export
 
 extr_polygons <- function(class_img,
-                          data_format = "gpkg",
+                          datatype = "gpkg",
                           class_col = "class",
                           append = FALSE,
-                          out_dir = "output_polygons") {
+                          out_dir = "class_polygons") {
 
   # Raster input validation
   if (!inherits(class_img, "SpatRaster")) {
@@ -39,7 +39,7 @@ extr_polygons <- function(class_img,
   }
 
   # Check if 'class_col' exists in the raster colnames
-  if (!(class_col %in% colnames(class_img))) {
+  if (!(class_col %in% names(class_img))) {
     stop("Specified 'class_col' does not exist in the raster attributes.")
   }
 
@@ -69,7 +69,7 @@ extr_polygons <- function(class_img,
     sf_polygons <- st_as_sf(polygons)
 
     # Save the polygons as shapefile
-    shapefile_name <- paste0(out_dir,"/", as.character(value),".", data_format)
+    shapefile_name <- paste0(out_dir,"/", as.character(value),".", datatype)
     st_write(sf_polygons, shapefile_name, append = append)
 
     # Add polygons to the list

@@ -48,22 +48,34 @@ points_superClass(
 A trained classification model.
 }
 \description{
-Essentially the superClass function from the RStoolbox but includes the possibility to partition point training data into training and validation sets.
+Essentially the \code{superClass()} function from the RStoolbox but includes the possibility to partition point training data into training- and validation sets.
 }
 \details{
 This function trains a supervised classification model both for classification and regression mode using point training data. If \code{trainPartition} is provided, the data is split into training and validation sets according to the specified proportion. Look up ?superClass() for documentation of the base function.
 }
 \examples{
-# Load required packages
-library(RStoolbox)
 
-# Load example data
-data("landsat")
-# Create point training data
-trainPoints <- data.frame(x = runif(100), y = runif(100), class = sample(c("class1", "class2"), 100, replace = TRUE))
-# Train model using all points
-points_superClass(landsat, trainPoints, "class")
+# running the example may take up to several minutes as raster processing takes its time.
+
+# read sample sf file of the RStoolboxExtensions package
+trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
+trainPoints <- sf_sample_read(trainPoints)
+
+# read sample raster file of the RStoolboxExtensions package
+Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
+Sebangau15 <- rast_sample_read(Sebangau15)
+
+# pre-process the training points
+pp_trainPoints <- pp_features(trainPoints, Sebangau15)
+
+# subset relevant raster bands
+subset_Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
+
 # Train model with data partitioning
-points_superClass(landsat, trainPoints, "class", trainPartition = 0.7)
+superClass <- points_superClass(subset_Sebangau15, pp_trainPoints, "landcover", trainPartition = 0.66)
+
+# checking the output
+names(superClass)
+head(superClass)
 
 }

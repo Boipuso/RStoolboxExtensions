@@ -16,11 +16,21 @@
 #' \deqn{NDMI = \frac{NIR - SWIR1}{NIR + SWIR1}}
 #'
 #' @examples
-#' raster <- terra::rast(nir = rast(matrix(runif(100), nrow = 10)),
-#'                 red = rast(matrix(runif(100), nrow = 10)),
-#'                 green = rast(matrix(runif(100), nrow = 10)),
-#'                 swir1 = rast(matrix(runif(100), nrow = 10)))
-#' calc_indices(raster)
+#' # running the example may take up to a few minutes as raster processing takes its time.
+#' # I recommend to run the example in a script to get update messages in the console.
+#'
+#' # read sample file of the RStoolboxExtensions package
+#' Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
+#' Sebangau15 <- rast_sample_read(Sebangau15)
+#'
+#' # rename the bands to have the correct band names for indices calculation
+#' Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
+#'
+#' # calculate the indices of your choice
+#' Sebangau15_indices <- calc_indices(Sebangau15, indices = c("ndvi", "ndbi", "ndmi"))
+#'
+#' names(Sebangau15_indices)
+#' head(Sebangau15_indices)
 #'
 #' @import terra
 #' @export
@@ -63,7 +73,7 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi")) {
       stop("Input raster must have 'red' and 'nir' bands for NDVI calculation.")
     }
     message("Calculating NDVI ...")
-    index_values$ndvi <- (raster$nir - raster$red) / (raster$nir + raster$red)
+    index_values$NDVI <- (raster$nir - raster$red) / (raster$nir + raster$red)
     index_names <- c(index_names, "NDVI")
     message("Done")
   }
@@ -72,7 +82,7 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi")) {
       stop("Input raster must have 'green' and 'nir' bands for NDWI calculation.")
     }
     message("Calculating NDWI ...")
-    index_values$ndwi <- (raster$green - raster$nir) / (raster$green + raster$nir)
+    index_values$NDWI <- (raster$green - raster$nir) / (raster$green + raster$nir)
     index_names <- c(index_names, "NDWI")
     message("Done")
   }
@@ -81,7 +91,7 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi")) {
       stop("Input raster must have 'swir1' and 'nir' bands for NDBI calculation.")
     }
     message("Calculating NDBI ...")
-    index_values$ndbi <- (raster$swir1 - raster$nir) / (raster$swir1 + raster$nir)
+    index_values$NDBI <- (raster$swir1 - raster$nir) / (raster$swir1 + raster$nir)
     index_names <- c(index_names, "NDBI")
     message("Done")
   }
@@ -90,7 +100,7 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi")) {
       stop("Input raster must have 'nir' and 'swir1' bands for NDMI calculation.")
     }
     message("Calculating NDMI ...")
-    index_values$ndmi <- (raster$nir - raster$swir1) / (raster$nir + raster$swir1)
+    index_values$NDMI <- (raster$nir - raster$swir1) / (raster$nir + raster$swir1)
     index_names <- c(index_names, "NDMI")
     message("Done")
   }

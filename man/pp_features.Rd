@@ -19,21 +19,26 @@ Pre-processes training features to prepare them for a supervised classification 
 The function transforms the training features to a sf object if it wasn't already and reprojects it to the coordinate reference system (CRS) of the raster input.
 }
 \details{
-This function pre-processes the training features to ensure they are in the same coordinate reference system (CRS) as the input raster. If the training features are not already in the sf format, they are converted to an sf object using \code{sf::st_as_sf()}. Then, if the CRS of the training features differs from the CRS of the raster, the function transforms the CRS of the training features to match the CRS of the raster using \code{sf::st_transform()}.
+This function uses \code{sf::st_as_sf()} to convert to a sf object and \code{sf::st_transform()} to align the CRS.
 }
 \examples{
-# Load required packages
-library(RStoolbox)
-library(sf)
+# read sample sf file of the RStoolboxExtensions package
+trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
+trainPoints <- sf_sample_read(trainPoints)
 
-# Create a raster object
-raster <- raster::raster(matrix(runif(100), nrow = 10))
+# read sample raster file of the RStoolboxExtensions package
+Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
+Sebangau15 <- rast_sample_read(Sebangau15)
 
-# Create training features
-trainFeat <- data.frame(x = runif(10), y = runif(10))
-trainFeat <- sf::st_as_sf(trainFeat, coords = c("x", "y"))
+# run the function
+pp_trainPoints <- pp_features(trainPoints, Sebangau15)
 
-# Pre-process training features
-pp_features(trainFeat, raster)
+# checking the class - should be sf
+class(pp_trainPoints)
+
+# checking the crs - should be aligned with raster crs
+sf::st_crs(pp_trainPoints)
+sf::st_crs(Sebangau15)
+
 
 }

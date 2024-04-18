@@ -6,22 +6,22 @@
 \usage{
 extr_polygons(
   class_img,
-  data_format = "gpkg",
+  datatype = "gpkg",
   class_col = "class",
   append = FALSE,
-  out_dir = "output_polygons"
+  out_dir = "class_polygons"
 )
 }
 \arguments{
 \item{class_img}{A raster object representing the classified image.}
-
-\item{data_format}{The format of the output data files. Can be ".shp" for shapefiles or ".gpkg" for GeoPackages. Defaults to ".gpkg".}
 
 \item{class_col}{The name of the column in \code{class_img} containing the class labels. Defaults to "class".}
 
 \item{append}{Logical indicating whether to append to existing data files if they already exist. Defaults to FALSE.}
 
 \item{out_dir}{The directory where the output files will be saved. Defaults to "output_polygons".}
+
+\item{data_format}{The format of the output data files. Can be ".shp" for shapefiles or ".gpkg" for GeoPackages. Defaults to ".gpkg".}
 }
 \value{
 A list of multipolygon sf objects, each representing a landcover class extracted from the classified image.
@@ -33,14 +33,14 @@ Extracts landcover classes from a classified image as multipolygons and saves th
 This function extracts landcover classes from a classified image represented by a raster object. It loops over unique class labels in the specified column (\code{class_col}) of the raster and converts each class into a binary raster. Then, it converts the binary raster into polygons using the \code{as.polygons} function from the \code{sp} package. The polygons are further converted into sf objects using \code{st_as_sf} from the \code{sf} package and saved as shapefiles or GeoPackages in the specified output directory (\code{out_dir}). The function returns a list of multipolygon sf objects, with each object representing a landcover class.
 }
 \examples{
-# Load required packages
-library(sf)
-library(terra)
+# load classified sample image of the RStoolboxExtensions package
+class_img <- system.file("extdata", "class_img.tif", package = "RStoolboxExtensions")
+class_img <- rast_sample_read(class_img)
 
-# Create a classified image raster
-class_img <- rast(matrix(sample(1:3, 100, replace = TRUE), nrow = 10))
+# apply the function
+class_polygons <- extr_polygons(class_img, out_dir = "test_output_polygons")
 
-# Extract polygons
-extr_polygons(class_img)
+# the function returns a list of the (multi-)polygons
+View(class_polygons)
 
 }

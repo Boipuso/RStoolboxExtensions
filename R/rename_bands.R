@@ -22,20 +22,25 @@
 #' If \code{subsetting} is TRUE (default), the function subsets the raster to include only the renamed bands.
 #'
 #' @examples
-#' raster <- terra::rast(blue = rast(matrix(runif(100), nrow = 10)),
-#'                          green = rast(matrix(runif(100), nrow = 10)),
-#'                          red = rast(matrix(runif(100), nrow = 10)),
-#'                          NIR = rast(matrix(runif(100), nrow = 10)),
-#'                          SWIR1 = rast(matrix(runif(100), nrow = 10)),
-#'                          SWIR2 = rast(matrix(runif(100), nrow = 10)))
-#' rename_bands(raster, sensor = "Landsat8")
+#' # read sample file of the RStoolboxExtensions package
+#' Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
+#' Sebangau15 <- rast_sample_read(Sebangau15)
+#'
+#' names(Sebangau15)
+#'
+#' Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
+#'
+#' names(Sebangau15)
 #'
 #' @import terra
 #' @export
 
 rename_bands <- function(raster, sensor, subsetting = TRUE) {
 
-  # stop if no sensor input was given
+  # stop if no raster or sensor input was given
+  if (missing(raster)) {
+    stop("raster input missing")
+  }
   if (missing(sensor)) {
     stop("Please specify the sensor (e.g., 'Landsat8', 'Landsat7', 'Landsat5', or 'Sentinel2').")
   }

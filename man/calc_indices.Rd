@@ -27,10 +27,20 @@ This function calculates the specified indices using the following formulas:
 \deqn{NDMI = \frac{NIR - SWIR1}{NIR + SWIR1}}
 }
 \examples{
-raster <- terra::rast(nir = rast(matrix(runif(100), nrow = 10)),
-                red = rast(matrix(runif(100), nrow = 10)),
-                green = rast(matrix(runif(100), nrow = 10)),
-                swir1 = rast(matrix(runif(100), nrow = 10)))
-calc_indices(raster)
+# running the example may take up to a few minutes as raster processing takes its time.
+# I recommend to run the example in a script to get update messages in the console.
+
+# read sample file of the RStoolboxExtensions package
+Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
+Sebangau15 <- rast_sample_read(Sebangau15)
+
+# rename the bands to have the correct band names for indices calculation
+Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
+
+# calculate the indices of your choice
+Sebangau15_indices <- calc_indices(Sebangau15, indices = c("ndvi", "ndbi", "ndmi"))
+
+names(Sebangau15_indices)
+head(Sebangau15_indices)
 
 }

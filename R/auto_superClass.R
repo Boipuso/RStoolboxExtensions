@@ -18,23 +18,43 @@
 #' @param trainPartition The proportion of points or polygons to be used for training, rest is used for validation. Defaults to 0.66.
 #' @return A list containing the classified image, model fit information, pre-processed raster(s), and pre-processed training features.
 #'
-#' @details This function automates the entire process of conducting a supervised classification. It performs pre-processing of the input raster(s) (consisting of the rename_bands and calc_indices function) and training features (consisting of the pp_features function), model training using the specified classification algorithm, and classification of the input raster(s) using the trained model. Depending on the geometry type of the training features (points or polygons), the appropriate training function (\code{points_superClass} or \code{superClass}) is called. The function returns a list containing the classified image, model fit information, pre-processed raster(s), and pre-processed training features for further analysis. The function deploys the superClass function from the RStoolbox package for the training of the model and the classification itself.
+#' @details This function automates the entire process of conducting a supervised classification. It performs pre-processing of the input raster(s) (consisting of the \code{rename_bands} and \code{calc_indices} functions) and training features (consisting of the \code{pp_features} function), model training using the specified classification algorithm, and classification of the input raster(s) using the trained model. Depending on the geometry type of the training features (points or polygons), the appropriate training function (\code{points_superClass} or \code{superClass}) is called. The function returns a list containing the classified image, model fit information, pre-processed raster(s), and pre-processed training features for further analysis. The function deploys the superClass function from the RStoolbox package for the training of the model and the classification itself.
 #'
 #' @examples
-#' # Load required packages
-#' library(sf)
-#' library(terra)
+#' # running the example may take up to several minutes as raster processing takes its time.
+#' # I recommend to run the example in a script to get update messages in the console.
 #'
-#' # Create a raster object
-#' raster <- rast(nrow=100, ncol=100)
-#' values(raster) <- matrix(runif(10000), nrow=100)
+#' # read sample raster files of the RStoolboxExtensions package
+#' Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
+#' Sebangau15 <- rast_sample_read(Sebangau15)
+#' Sebangau23 <- system.file("extdata", "Sebangau23.tif", package = "RStoolboxExtensions")
+#' Sebangau23 <- rast_sample_read(Sebangau23)
 #'
-#' # Create training features
-#' train_features <- data.frame(x = runif(10), y = runif(10), class = sample(c("class1", "class2"), 10, replace = TRUE))
-#' train_features <- sf::st_as_sf(train_features, coords = c("x", "y"))
+#' # read sample sf file of the RStoolboxExtensions package
+#' trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
+#' trainPoints <- sf_sample_read(trainPoints)
 #'
-#' # Conduct supervised classification
-#' SC_result <- auto_superClass(raster, train_features, "class", sensor = "Landsat8")
+#' # apply the function
+#' asC_output <- auto_superClass(img = Sebangau15,
+#'                               img2 = Sebangau23,
+#'                               train_features = trainPoints,
+#'                               responseCol = "landcover",
+#'                               sensor = "Landsat8",
+#'                               calc_indices = TRUE,
+#'                               indices = c("ndvi", "ndbi"))
+#'
+#' # check that the generated list contains all 4 output objects
+#' names(asC_output)
+#'
+#' # extract objects
+#' class_img <- asC_output$superClass_img
+#' pp_features <- asC_output$pp_features
+#' pp_raster <- asC_output$pp_raster
+#' accuracy <- asC_output$modelFit
+#'
+#' # view the results
+#' terra::plot(class_img)
+#' View(accuracy)
 #'
 #' @import terra
 #' @import sf
@@ -183,7 +203,7 @@ auto_superClass <- function(img,
   # create a list containing the classified image and the accuracy assessment
   output <- list(superClass_img = superClass_img,
                  modelFit = superClass$modelFit,
-                 PPraster = input_raster,
+                 pp_raster = input_raster,
                  pp_features = pp_features)
   return(output)
 }
