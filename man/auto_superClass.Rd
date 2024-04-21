@@ -23,27 +23,27 @@ auto_superClass(
 \arguments{
 \item{img}{A raster object representing the input image for classification.}
 
-\item{img2}{Optional. A second raster object representing a second input image for change detection.}
+\item{img2}{Optional. A second raster object representing a second input image of the same extent as the \code{img} - for change detection.}
 
-\item{train_features}{A data frame containing the training features with locations.}
+\item{train_features}{A data frame containing the training features with locations. Can be points or polygons.}
 
 \item{responseCol}{The name of the column in \code{train_features} containing the response variable.}
 
-\item{sensor}{The sensor type of the input raster(s). Used for band renaming if necessary.}
+\item{sensor}{The sensor type of the input raster(s). Used for band renaming and subsetting if specified. Ignored if \code{rename_bands} is FALSE.}
 
-\item{subsetting}{Logical indicating whether to perform subsetting of bands. Defaults to TRUE.}
+\item{subsetting}{Logical indicating whether to perform subsetting of bands. Ignored if \code{rename_bands} is FALSE. Defaults to TRUE.}
 
 \item{rename_bands}{Logical indicating whether to rename bands based on sensor type. Defaults to TRUE.}
 
 \item{calc_indices}{Logical indicating whether to calculate spectral indices. Defaults to FALSE.}
 
-\item{indices}{Character vector specifying the spectral indices to be calculated if \code{calc_indices} is TRUE. Defaults to c("ndvi", "ndwi", "ndbi", "ndmi").}
+\item{indices}{Character vector specifying the spectral indices to be calculated if \code{calc_indices} is TRUE. Ignored if \code{calc_indices} is FALSE. Defaults to c("ndvi", "ndwi", "ndbi", "ndmi").}
 
 \item{model}{The classification model to be used. Defaults to "rf" (random forest).}
 
-\item{nSamples}{Integer (polygon based). Number of samples per land cover class. If NULL all pixels covered by training polygons are used (memory intensive!). Ignored if train_features consists of POINTs. Defaults to 100.}
+\item{nSamples}{Integer (polygon based). Number of samples per land cover class. If NULL all pixels covered by training polygons are used (memory intensive!). Ignored if \code{train_features} consists of Points. Defaults to 100.}
 
-\item{nSamplesV}{Integer. Number of validation samples per land cover class. If NULL all pixels covered by validation polygons are used (memory intensive!). Ignored if train_features consists of POINTs. Defaults to 50.}
+\item{nSamplesV}{Integer. Number of validation samples per land cover class. If NULL all pixels covered by validation polygons are used (memory intensive!). Ignored if \code{train_features} consists of Points. Defaults to 50.}
 
 \item{trainPartition}{The proportion of points or polygons to be used for training, rest is used for validation. Defaults to 0.66.}
 }
@@ -53,11 +53,15 @@ A list containing the classified image, model fit information, pre-processed ras
 \description{
 Automates the process of conducting a supervised classification, including pre-processing of raster data and training features, model training, and classification.
 Offers possibility to conduct a change detection by including a second raster input (assuming training features for change detection).
+Base function is the \code{superClass} function from the RStoolbox package.
 }
 \details{
-This function automates the entire process of conducting a supervised classification. It performs pre-processing of the input raster(s) (consisting of the \code{rename_bands} and \code{calc_indices} functions) and training features (consisting of the \code{pp_features} function), model training using the specified classification algorithm, and classification of the input raster(s) using the trained model. Depending on the geometry type of the training features (points or polygons), the appropriate training function (\code{points_superClass} or \code{superClass}) is called. The function returns a list containing the classified image, model fit information, pre-processed raster(s), and pre-processed training features for further analysis. The function deploys the superClass function from the RStoolbox package for the training of the model and the classification itself.
+This function automates the entire process of conducting a supervised classification. It performs pre-processing of the input raster(s) (consisting of the \code{rename_bands} and \code{calc_indices} functions)
+and training features (consisting of the \code{pp_features} function), model training using either \code{superClass} or \code{points_superClass} depending on whether the \code{train_features} input are points or polygons
+and classification of the input raster(s) using the trained model. The function returns a list containing the classified image, model fit information, pre-processed raster(s), and pre-processed training features for further analysis.
 }
 \examples{
+\dontrun{
 # running the example may take up to several minutes as raster processing takes its time.
 # I recommend to run the example in a script to get update messages in the console.
 
@@ -92,5 +96,7 @@ accuracy <- asC_output$modelFit
 # view the results
 terra::plot(class_img)
 View(accuracy)
+
+}
 
 }

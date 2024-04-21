@@ -19,23 +19,34 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 This package offers functions to automise pre-processing steps needed to conduct unsupervised
-classifications with the "superclass" function of the RStoolbox package. Additionally, post-processing functions to export landcover classes as (multi-)polygons and to mask, crop and export a raster to the respective landcover classes of the (multi-)polygons are included.
+classifications with the "superSlass" function of the RStoolbox package. Additionally, post-processing functions to export landcover classes as (multi-)polygons and to mask, crop and export a raster to the respective landcover classes of the (multi-)polygons are included.
 
 ## Installation
 
 You can install the development version of RStoolboxExtensions like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+install_github("Boipuso/RStoolboxExtensions")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to solve a common problem. Let's say we want to conduct a 
+supervised classification to map landcover change. The functions integrated in this package allow for fast pre-processing of the raster(s) and the training features. For this example we use the sample data of this package for the Sebangau Nationalpark in Borneo. 
 
 ```{r example}
+## load the package
 library(RStoolboxExtensions)
-## basic example code
+
+## retrieve the sample raster data from the package
+ Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
+ Sebangau15 <- rast_sample_read(Sebangau15)
+ Sebangau23 <- system.file("extdata", "Sebangau23.tif", package = "RStoolboxExtensions")
+ Sebangau23 <- rast_sample_read(Sebangau23)
+
+ # read sample sf file of the RStoolboxExtensions package
+ trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
+ trainPoints <- sf_sample_read(trainPoints)
 ```
 
 What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:

@@ -2,10 +2,25 @@
 #'
 #' Calculates specified spectral indices from multispectral raster data.
 #' Supported indices include NDVI, NDWI, NDBI, and NDMI.
+#' Prerequisite is correct naming for the bands "Blue", Green","Red", "NIR", "SWIR1" and "SWIR2".
+#' You can use the \code{rename_bands} function to name the bands accordingly.
 #'
 #' @param raster A raster object containing bands for Green, Red, NIR and SWIR1. The naming has to be accurate.
 #' (e.g. the red band has to be named "Red", etc.)
-#' @param indices A character vector specifying which indices to calculate. Defaults to c("ndvi", "ndwi", "ndbi", "ndmi").
+#' @param indices A character vector specifying which indices to calculate. Defaults to c("ndvi", "ndwi").
+#'
+#' \describe{
+#'     \item{ndvi}{Normalized Difference Vegetation Index}
+#'     \item{ndwi}{Normalized Difference Water Index}
+#'     \item{ndbi}{Normalized Difference Built-Up Index}
+#'     \item{ndmi}{Normalized Difference Moisture Index}
+#'     \item{ndsi}{Normalized Difference Snow Index}
+#'     \item{evi}{Enhanced Vegetation Index}
+#'     \item{ewi}{Enhanced Water Index}
+#'     \item{sr}{Simple Ratio}
+#'     \item{savi}{Soil Adjusted Vegetation Index}
+#'   }
+#' @param L A numeric value specifying the soil adjustment factor for SAVI calculation.
 #'
 #' @return A raster object with calculated spectral indices added as additional layers.
 #'
@@ -14,8 +29,14 @@
 #' \deqn{NDWI = \frac{Green - NIR}{Green + NIR}}
 #' \deqn{NDBI = \frac{SWIR1 - NIR}{SWIR1 + NIR}}
 #' \deqn{NDMI = \frac{NIR - SWIR1}{NIR + SWIR1}}
+#' \deqn{NDSI = \frac{Green - Swir1}{Green + Swir1}}
+#' \deqn{EVI = 2.5 \times \left(\frac{NIR - Red}{NIR + 6 \times Red - 7.5 \times Blue + 1}\right)}
+#' \deqn{EWI = 2.5 \times \left(\frac{Green - SWIR1}{Green + 2.4 \times SWIR1 + 1}\right)}
+#' \deqn{SR = \frac{NIR}{Red}}
+#' \deqn{SAVI = \frac{NIR - Red}{(NIR + Red + L) \times (1 + L)}}
 #'
 #' @examples
+#' \dontrun{
 #' # running the example may take up to a few minutes as raster processing takes its time.
 #' # I recommend to run the example in a script to get update messages in the console.
 #'
@@ -29,37 +50,38 @@
 #' # calculate the indices of your choice
 #' Sebangau15_indices <- calc_indices(Sebangau15, indices = c("ndvi", "ndbi", "ndmi"))
 #'
+#' # checking the results
 #' names(Sebangau15_indices)
 #' head(Sebangau15_indices)
+#' }
 #'
 #' @import terra
+#'
 #' @export
 
-calc_indices <- function(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi")) {
+calc_indices <- function(raster, indices = c("ndvi", "ndwi"), L = NULL) {
 
-  # Raster input validation
-  if (!inherits(raster, "SpatRaster")) {
-    stop("Input 'raster' must be a SpatRaster object.")
+  #### validating the input and stop if something is wrong ####
+  if (missing(raster)) {
+    stop("raster input missing")
   }
-
-  # Indices input validation
   if (!is.character(indices)) {
     stop("Parameter 'indices' must be a character vector.")
   }
 
-  # Handle case sensibility of indices input
+  # handle case sensibility of indices input
   indices = tolower(indices)
-
-  # Check if all index names are valid
-  valid_indices <- c("ndvi", "ndwi", "ndbi", "ndmi")
+  # check if all index names are valid
+  valid_indices <- c("ndvi", "ndwi", "ndbi", "ndmi", "ndsi", "evi", "ewi", "sr", "savi")
   invalid_indices <- setdiff(indices, valid_indices)
-
   # stop and print error message if they are not valid
   if (length(invalid_indices) > 0) {
     stop(paste("Invalid index names:", paste(invalid_indices, collapse = ", ")))
   }
 
-  # Handle case sensitivity of raster names but store old names
+  ##############################################################
+
+  # handle case sensitivity of raster names but store old names
   original_names <- names(raster)
   names(raster) <- tolower(names(raster))
 
@@ -67,7 +89,7 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi")) {
   index_values <- list()
   index_names <- c()
 
-  # Calculate the specified indices
+  # calculate the specified indices if the bands needed are provided
   if ("ndvi" %in% indices) {
     if (!all(c("red", "nir") %in% names(raster))) {
       stop("Input raster must have 'red' and 'nir' bands for NDVI calculation.")
@@ -104,11 +126,59 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi")) {
     index_names <- c(index_names, "NDMI")
     message("Done")
   }
+  if ("ndsi" %in% indices) {
+    if (!all(c("green", "swir1") %in% names(raster))) {
+      stop("Input raster must have 'green' and 'swir1' bands for NDSI calculation.")
+    }
+    message("Calculating NDSI ...")
+    index_values$NDSI <- (raster$green - raster$swir1) / (raster$green + raster$swir1)
+    index_names <- c(index_names, "NDSI")
+    message("Done")
+  }
+  if ("evi" %in% indices) {
+    if (!all(c("blue", "red", "nir") %in% names(raster))) {
+      stop("Input raster must have 'blue', 'red' and 'nir' bands for EVI calculation.")
+    }
+    message("Calculating EVI ...")
+    index_values$EVI <- 2.5 * ((raster$nir - raster$red) / (raster$nir + 6*raster$red - 7.5*raster$blue + 1))
+    index_names <- c(index_names, "EVI")
+    message("Done")
+  }
+  if ("ewi" %in% indices) {
+    if (!all(c("green", "swir1") %in% names(raster))) {
+      stop("Input raster must have 'green' and 'swir1' bands for EWI calculation.")
+    }
+    message("Calculating EWI ...")
+    index_values$EWI <- 2.5 * ((raster$green - raster$swir1) / (raster$green + 2.4*raster$swir1 + 1))
+    index_names <- c(index_names, "EWI")
+    message("Done")
+  }
+  if ("sr" %in% indices) {
+    if (!all(c("red", "nir") %in% names(raster))) {
+      stop("Input raster must have 'red' and 'nir' bands for SR calculation.")
+    }
+    message("Calculating SR ...")
+    index_values$SR <- raster$nir / raster$red
+    index_names <- c(index_names, "SR")
+    message("Done")
+  }
+  if ("savi" %in% indices) {
+    if (!all(c("green", "swir1") %in% names(raster))) {
+      stop("Input raster must have 'green' and 'swir1' bands for SAVI calculation.")
+    }
+    if (is.null(L)) {
+      stop("Input 'L' must be specified for calculating the SAVI")
+    }
+    message("Calculating SAVI ...")
+    index_values$SAVI <- (raster$nir - raster$red) / ((raster$nir + raster$red + L) * (1 + L))
+    index_names <- c(index_names, "SAVI")
+    message("Done")
+  }
 
   # return to the old colnames
   names(raster) <- original_names
 
-  # Add the specified indices to the raster
+  # add the specified indices to the raster
   for (index_name in names(index_values)) {
     add(raster) <- index_values[[index_name]]
   }
@@ -116,7 +186,15 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi")) {
   # name them in the raster
   names(raster)[(nlyr(raster) - length(index_values) + 1):nlyr(raster)] <- names(index_values)
 
+  # # Function to remove NA values from a raster
+  # remove_NA <- function(raster) {
+  #   return(raster[!is.na(raster)])
+  # }
+  #
+  # #remove Na from every new index layer
+  # for (name in names(index_values)) {
+  #   raster[[name]] <- remove_NA(raster[[name]])
+  # }
+
   return(raster)
 }
-
-

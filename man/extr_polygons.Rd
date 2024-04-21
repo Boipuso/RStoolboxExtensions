@@ -2,7 +2,7 @@
 % Please edit documentation in R/extr_polygons.R
 \name{extr_polygons}
 \alias{extr_polygons}
-\title{Extract Landcover Classes as Multipolygons from Classified Image}
+\title{Extract Landcover Classes as (Multi-)polygons from Classified Image}
 \usage{
 extr_polygons(
   class_img,
@@ -24,15 +24,20 @@ extr_polygons(
 \item{data_format}{The format of the output data files. Can be ".shp" for shapefiles or ".gpkg" for GeoPackages. Defaults to ".gpkg".}
 }
 \value{
-A list of multipolygon sf objects, each representing a landcover class extracted from the classified image.
+A list of (multi-)polygon sf objects, each representing a landcover class extracted from the classified image.
 }
 \description{
-Extracts landcover classes from a classified image as multipolygons and saves them as shapefiles or GeoPackages.
+Extracts landcover classes from a classified image as (multi-)polygons and saves them in a format specified by the user.
 }
 \details{
-This function extracts landcover classes from a classified image represented by a raster object. It loops over unique class labels in the specified column (\code{class_col}) of the raster and converts each class into a binary raster. Then, it converts the binary raster into polygons using the \code{as.polygons} function from the \code{sp} package. The polygons are further converted into sf objects using \code{st_as_sf} from the \code{sf} package and saved as shapefiles or GeoPackages in the specified output directory (\code{out_dir}). The function returns a list of multipolygon sf objects, with each object representing a landcover class.
+This function extracts landcover classes from a classified image represented by a raster object.
+It loops over unique class labels in the specified column (\code{class_col}) of the raster and converts each class into a binary raster.
+Then, it converts the binary raster into polygons using the \code{as.polygons} function from the \code{sp} package.
+The polygons are further converted into sf objects using \code{st_as_sf} from the \code{sf} package and saved as shapefiles or GeoPackages in the specified output directory (\code{out_dir}).
+The function returns a list of multipolygon sf objects, with each object representing a landcover class.
 }
 \examples{
+\dontrun{
 # load classified sample image of the RStoolboxExtensions package
 class_img <- system.file("extdata", "class_img.tif", package = "RStoolboxExtensions")
 class_img <- rast_sample_read(class_img)
@@ -42,5 +47,7 @@ class_polygons <- extr_polygons(class_img, out_dir = "test_output_polygons")
 
 # the function returns a list of the (multi-)polygons
 View(class_polygons)
+
+}
 
 }

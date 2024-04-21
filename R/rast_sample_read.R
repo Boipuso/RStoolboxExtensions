@@ -1,7 +1,7 @@
-#' Read Sample Data for RStoolboxExtensions Package
+#' Read Sample Raster Data for RStoolboxExtensions Package
 #'
-#' This function can be used to load the sample data included in the RStoolboxExtensions package
-#' into your environment.
+#' This function can be used to load the raster sample data included in the RStoolboxExtensions package
+#' into your environment. It serves as a demonstration how to retrieve the data imbedded in the RStoolboxExtensions package.
 #'
 #' @param path path to filename
 #'
@@ -17,6 +17,7 @@
 #' @importFrom terra rast
 #'
 #' @examples
+#' # retrieving the file where the raster is stored and load it
 #' Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
 #' Sebangau15 <- rast_sample_read(Sebangau15)
 #'

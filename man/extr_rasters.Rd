@@ -13,9 +13,9 @@ extr_rasters(
 )
 }
 \arguments{
-\item{raster}{A raster object to be cropped and masked.}
+\item{raster}{A raster object to be cropped and masked to the landcover classes of the \code{polygon_list}.}
 
-\item{polygon_list}{A list of (multi-)polygon sf objects, each representing a landcover class.}
+\item{polygon_list}{A list of (multi-)polygons, each representing a landcover class.}
 
 \item{out_dir}{The directory where the output masked rasters will be saved. Defaults to "output_masked".}
 
@@ -30,6 +30,7 @@ A list of cropped and masked raster objects, each corresponding to an entry of t
 Crops and masks a raster to a list of (multi-)polygons and saves the masked rasters as GeoTIFF or other raster formats.
 }
 \examples{
+\dontrun{
 # loading sample multitpolygons from the RStoolboxExtensions package
 afforestation <- system.file("extdata", "afforestation.gpkg", package = "RStoolboxExtensions")
 afforestation <- sf_sample_read(afforestation)
@@ -40,16 +41,19 @@ nonforest <- sf_sample_read(nonforest)
 forest <- system.file("extdata", "forest.gpkg", package = "RStoolboxExtensions")
 forest <- sf_sample_read(forest)
 
+# put them together in a list
+class_polygons <- list(c(afforestation, deforestation, nonforest, forest))
+
 # load classified sample image of the RStoolboxExtensions package
 class_img <- system.file("extdata", "class_img.tif", package = "RStoolboxExtensions")
 class_img <- rast_sample_read(class_img)
 
-# put them together in a list
-class_polygons <- list(c(afforestation, deforestation, nonforest, forest))
-
 # apply the function
 class_rasters <- extr_rasters(class_img, class_polygons, out_dir = "test_output_rasters")
 
+# check the results
 View(class_rasters)
+
+}
 
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sf_sample_read.R
 \name{sf_sample_read}
 \alias{sf_sample_read}
-\title{Read Sample Data for RStoolboxExtensions Package}
+\title{Read Sample SF Data for RStoolboxExtensions Package}
 \usage{
 sf_sample_read(path)
 }
@@ -17,10 +17,11 @@ trainPoints.geojson - training points for landcover change detection of the Seba
 trainPolygons.geojson - training polygons for landcover change detection of the Sebangau Nationalpark, Borneo between 2015-2023
 }
 \description{
-This function can be used to load the sample data included in the RStoolboxExtensions package
-into your environment.
+This function can be used to load the sample sf data included in the RStoolboxExtensions package
+into your environment. It serves as a demonstration how to retrieve the sf data imbedded in the RStoolboxExtensions package.
 }
 \examples{
+# retrieving the file where the sf object is stored and load it
 trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
 trainPoints <- sf_sample_read(trainPoints)
 

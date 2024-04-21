@@ -17,16 +17,18 @@ rename_bands(raster, sensor, subsetting = TRUE)
 A raster object with renamed bands.
 }
 \description{
-Renames bands in a raster object according to the specified sensor. The function identifies original band positions for the bands
-Blue, Green, Red, NIR, SWIR1, SWIR2 according to the sensor and names them "Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2".
+Renames bands in a raster object according to the specified sensor. Prerequisite function to run
+the \code{calc_indices} function to assure correct naming for indexing.
+The function identifies original band names for the bands Blue, Green, Red, NIR, SWIR1, SWIR2
+and names them "Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2".
 }
 \details{
-This function renames bands in a raster object based on the sensor type. Supported sensors and corresponding bands:
+This function renames bands in a raster object based on the sensor type. Supported sensors and corresponding bands are:
 \itemize{
-\item Landsat 8: Blue, Green, Red, NIR, SWIR1, SWIR2
-\item Landsat 7: Blue, Green, Red, NIR, SWIR1, SWIR2
-\item Landsat 5: Blue, Green, Red, NIR, SWIR1, SWIR2
-\item Sentinel 2: Blue, Green, Red, NIR, SWIR1, SWIR2
+\item Landsat 8: "SR_B2", "SR_B3", "SR_B4", "SR_B5", "SR_B6", "SR_B7"
+\item Landsat 7: "SR_B1", "SR_B2", "SR_B3", "SR_B4", "SR_B5", "SR_B7"
+\item Landsat 5: "B1", "B2", "B3", "B4", "B5", "B7"
+\item Sentinel 2: "B2", "B3", "B4", "B8", "B11", "B12"
 }
 
 If \code{subsetting} is set to FALSE, band names are directly replaced without subsetting the raster.
@@ -34,14 +36,19 @@ If \code{subsetting} is set to FALSE, band names are directly replaced without s
 If \code{subsetting} is TRUE (default), the function subsets the raster to include only the renamed bands.
 }
 \examples{
+\dontrun{
 # read sample file of the RStoolboxExtensions package
 Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
 Sebangau15 <- rast_sample_read(Sebangau15)
 
+# checking the names
 names(Sebangau15)
 
+# applying the function
 Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
 
+# checking the names again to see if it worked
 names(Sebangau15)
+}
 
 }

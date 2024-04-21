@@ -4,13 +4,27 @@
 \alias{calc_indices}
 \title{Calculate Spectral Indices}
 \usage{
-calc_indices(raster, indices = c("ndvi", "ndwi", "ndbi", "ndmi"))
+calc_indices(raster, indices = c("ndvi", "ndwi"), L = NULL)
 }
 \arguments{
 \item{raster}{A raster object containing bands for Green, Red, NIR and SWIR1. The naming has to be accurate.
 (e.g. the red band has to be named "Red", etc.)}
 
-\item{indices}{A character vector specifying which indices to calculate. Defaults to c("ndvi", "ndwi", "ndbi", "ndmi").}
+\item{indices}{A character vector specifying which indices to calculate. Defaults to c("ndvi", "ndwi").
+
+\describe{
+\item{ndvi}{Normalized Difference Vegetation Index}
+\item{ndwi}{Normalized Difference Water Index}
+\item{ndbi}{Normalized Difference Built-Up Index}
+\item{ndmi}{Normalized Difference Moisture Index}
+\item{ndsi}{Normalized Difference Snow Index}
+\item{evi}{Enhanced Vegetation Index}
+\item{ewi}{Enhanced Water Index}
+\item{sr}{Simple Ratio}
+\item{savi}{Soil Adjusted Vegetation Index}
+}}
+
+\item{L}{A numeric value specifying the soil adjustment factor for SAVI calculation.}
 }
 \value{
 A raster object with calculated spectral indices added as additional layers.
@@ -18,6 +32,8 @@ A raster object with calculated spectral indices added as additional layers.
 \description{
 Calculates specified spectral indices from multispectral raster data.
 Supported indices include NDVI, NDWI, NDBI, and NDMI.
+Prerequisite is correct naming for the bands "Blue", Green","Red", "NIR", "SWIR1" and "SWIR2".
+You can use the \code{rename_bands} function to name the bands accordingly.
 }
 \details{
 This function calculates the specified indices using the following formulas:
@@ -25,8 +41,14 @@ This function calculates the specified indices using the following formulas:
 \deqn{NDWI = \frac{Green - NIR}{Green + NIR}}
 \deqn{NDBI = \frac{SWIR1 - NIR}{SWIR1 + NIR}}
 \deqn{NDMI = \frac{NIR - SWIR1}{NIR + SWIR1}}
+\deqn{NDSI = \frac{Green - Swir1}{Green + Swir1}}
+\deqn{EVI = 2.5 \times \left(\frac{NIR - Red}{NIR + 6 \times Red - 7.5 \times Blue + 1}\right)}
+\deqn{EWI = 2.5 \times \left(\frac{Green - SWIR1}{Green + 2.4 \times SWIR1 + 1}\right)}
+\deqn{SR = \frac{NIR}{Red}}
+\deqn{SAVI = \frac{NIR - Red}{(NIR + Red + L) \times (1 + L)}}
 }
 \examples{
+\dontrun{
 # running the example may take up to a few minutes as raster processing takes its time.
 # I recommend to run the example in a script to get update messages in the console.
 
@@ -40,7 +62,9 @@ Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
 # calculate the indices of your choice
 Sebangau15_indices <- calc_indices(Sebangau15, indices = c("ndvi", "ndbi", "ndmi"))
 
+# checking the results
 names(Sebangau15_indices)
 head(Sebangau15_indices)
+}
 
 }

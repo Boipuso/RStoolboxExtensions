@@ -2,7 +2,7 @@
 % Please edit documentation in R/rast_sample_read.R
 \name{rast_sample_read}
 \alias{rast_sample_read}
-\title{Read Sample Data for RStoolboxExtensions Package}
+\title{Read Sample Raster Data for RStoolboxExtensions Package}
 \usage{
 rast_sample_read(path)
 }
@@ -18,10 +18,11 @@ Sebangau23.tif - Landsat8 median composite for the year 2023 of the Sebangau Nat
 class_img.tif <- classified landcover change detection image 2015-2023 of the Sebangau Nationalpark, Borneo
 }
 \description{
-This function can be used to load the sample data included in the RStoolboxExtensions package
-into your environment.
+This function can be used to load the raster sample data included in the RStoolboxExtensions package
+into your environment. It serves as a demonstration how to retrieve the data imbedded in the RStoolboxExtensions package.
 }
 \examples{
+# retrieving the file where the raster is stored and load it
 Sebangau15 <- system.file("extdata", "Sebangau15.tif", package = "RStoolboxExtensions")
 Sebangau15 <- rast_sample_read(Sebangau15)
 

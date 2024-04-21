@@ -51,10 +51,11 @@ A trained classification model.
 Essentially the \code{superClass()} function from the RStoolbox but includes the possibility to partition point training data into training- and validation sets.
 }
 \details{
-This function trains a supervised classification model both for classification and regression mode using point training data. If \code{trainPartition} is provided, the data is split into training and validation sets according to the specified proportion. Look up ?superClass() for documentation of the base function.
+This function trains a supervised classification model both for classification and regression mode using point training data.
+If \code{trainPartition} is provided, the data is split into training and validation sets according to the specified proportion. Look up ?superClass() for documentation of the base function.
 }
 \examples{
-
+\dontrun{
 # running the example may take up to several minutes as raster processing takes its time.
 
 # read sample sf file of the RStoolboxExtensions package
@@ -71,11 +72,13 @@ pp_trainPoints <- pp_features(trainPoints, Sebangau15)
 # subset relevant raster bands
 subset_Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
 
-# Train model with data partitioning
+# train model with data partitioning
 superClass <- points_superClass(subset_Sebangau15, pp_trainPoints, "landcover", trainPartition = 0.66)
 
 # checking the output
 names(superClass)
 head(superClass)
+
+}
 
 }

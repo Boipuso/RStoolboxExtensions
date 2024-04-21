@@ -9,19 +9,20 @@ pp_features(trainFeat, raster)
 \arguments{
 \item{trainFeat}{Training features, either an sf object or an object that can be converted to an sf object.}
 
-\item{raster}{A raster object representing the spatial extent and coordinate reference system (CRS) to which the training features will be aligned.}
+\item{raster}{A raster object representing the spatial extent and CRS to which the training features CRS will be aligned.}
 }
 \value{
-A pre-processed sf object of training features aligned with coordinate reference system (CRS) of the input raster.
+A pre-processed sf object of training features aligned with the CRS of the input raster.
 }
 \description{
-Pre-processes training features to prepare them for a supervised classification using the "superClass" command from the RStoolbox package.
+Pre-processes training features to prepare them for a supervised classification using the \code{superClass} command from the RStoolbox package.
 The function transforms the training features to a sf object if it wasn't already and reprojects it to the coordinate reference system (CRS) of the raster input.
 }
 \details{
 This function uses \code{sf::st_as_sf()} to convert to a sf object and \code{sf::st_transform()} to align the CRS.
 }
 \examples{
+\dontrun{
 # read sample sf file of the RStoolboxExtensions package
 trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
 trainPoints <- sf_sample_read(trainPoints)
@@ -39,6 +40,6 @@ class(pp_trainPoints)
 # checking the crs - should be aligned with raster crs
 sf::st_crs(pp_trainPoints)
 sf::st_crs(Sebangau15)
-
+}
 
 }
