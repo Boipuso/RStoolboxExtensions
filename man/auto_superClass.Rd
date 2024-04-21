@@ -14,6 +14,7 @@ auto_superClass(
   subsetting = TRUE,
   calc_indices = FALSE,
   indices = c("ndvi", "ndwi"),
+  L = NULL,
   model = "rf",
   nSamples = 100,
   nSamplesV = 50,
@@ -38,6 +39,8 @@ auto_superClass(
 \item{calc_indices}{Logical indicating whether to calculate spectral indices. Defaults to FALSE.}
 
 \item{indices}{Character vector specifying the spectral indices to be calculated if \code{calc_indices} is TRUE. Ignored if \code{calc_indices} is FALSE. Defaults to c("ndvi", "ndwi", "ndbi", "ndmi").}
+
+\item{L}{A numeric value specifying the soil adjustment factor for SAVI calculation.}
 
 \item{model}{The classification model to be used. Defaults to "rf" (random forest).}
 

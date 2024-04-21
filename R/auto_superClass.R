@@ -17,6 +17,7 @@
 #' @param nSamples Integer (polygon based). Number of samples per land cover class. If NULL all pixels covered by training polygons are used (memory intensive!). Ignored if \code{train_features} consists of Points. Defaults to 100.
 #' @param nSamplesV Integer. Number of validation samples per land cover class. If NULL all pixels covered by validation polygons are used (memory intensive!). Ignored if \code{train_features} consists of Points. Defaults to 50.
 #' @param trainPartition The proportion of points or polygons to be used for training, rest is used for validation. Defaults to 0.66.
+#' @param L A numeric value specifying the soil adjustment factor for SAVI calculation.
 #'
 #' @return A list containing the classified image, model fit information, pre-processed raster(s), and pre-processed training features.
 #'
@@ -78,6 +79,7 @@ auto_superClass <- function(img,
                             subsetting = TRUE,
                             calc_indices = FALSE,
                             indices = c("ndvi", "ndwi"),
+                            L = NULL,
                             model = "rf",
                             nSamples = 100,
                             nSamplesV = 50,
@@ -141,7 +143,7 @@ auto_superClass <- function(img,
     }
 
     if (calc_indices == TRUE) {
-      input_raster <- calc_indices(raster = img_bands, indices = indices)
+      input_raster <- calc_indices(raster = img_bands, indices = indices, L = L)
     }
     else if (calc_indices == FALSE) {
       input_raster <- img_bands
@@ -166,8 +168,8 @@ auto_superClass <- function(img,
     }
 
     if (calc_indices == TRUE) {
-      input_raster_1 <- calc_indices(raster = img_bands, indices = indices)
-      input_raster_2 <- calc_indices(raster = img2_bands, indices = indices)
+      input_raster_1 <- calc_indices(raster = img_bands, indices = indices, L = L)
+      input_raster_2 <- calc_indices(raster = img2_bands, indices = indices, L = L)
       names(input_raster_2) <- paste0(names(input_raster_2), "_2")
       input_raster <- c(input_raster_1, input_raster_2)
     }
