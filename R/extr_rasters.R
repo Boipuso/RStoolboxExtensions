@@ -1,9 +1,10 @@
-#' Crops and Masks a Raster to a list of (Multi-)polygons
+#' Crops and Masks a Raster to a list of (Multi-)Polygons
 #'
-#' Crops and masks a raster to a list of (multi-)polygons and saves the masked rasters as GeoTIFF or other raster formats.
+#' Crops and masks a raster to a list of (multi-)polygons and optionally saves the masked rasters as GeoTIFF or other raster formats.
 #'
 #' @param raster A raster object to be cropped and masked to the landcover classes of the \code{polygon_list}.
 #' @param polygon_list A list of (multi-)polygons, each representing a landcover class.
+#' @param saveLoc Logical indicating whether to store the masked rasters in a local folder. Defaults to FALSE:
 #' @param out_dir The directory where the output masked rasters will be saved. Defaults to "output_masked".
 #' @param overwrite Logical indicating whether to overwrite existing files if they already exist. Defaults to TRUE.
 #' @param datatype The data type of the output raster files. Defaults to "tif".
@@ -44,7 +45,8 @@
 
 extr_rasters <- function(raster,
                          polygon_list,
-                         out_dir = "output_masked",
+                         saveLoc = FALSE,
+                         out_dir = "raster_masked",
                          overwrite = TRUE,
                          datatype = "tif") {
 
@@ -62,21 +64,17 @@ extr_rasters <- function(raster,
     stop("Parameter 'datatype' must be a character.")
   }
 
-  # check if polygon_list is a list of polygons or multipolygons
-  if (!all(sapply(polygon_list, function(x) inherits(x, c("Polygon", "MultiPolygon"))))) {
-    stop("Input 'polygon_list' must be a list of polygons or multipolygons.")
-  }
+  # # check if polygon_list is a list of polygons or multipolygons
+  # if (!all(sapply(polygon_list, function(x) inherits(x, c("Polygon", "MultiPolygon"))))) {
+  #   stop("Input 'polygon_list' must be a list of polygons or multipolygons.")
+  # }
   ##############################################################
 
   # create empty list to store the results
   masked_raster_list <- list()
 
-  # create a directory to save the polygons if it doesn't exist already
-  if (!dir.exists(out_dir)) {
-    dir.create(out_dir)
-  }
-
-  # loop over the entries of the polygon list
+  # loop over the entries of the polygon list to crop and mask the input raster
+  # to every entry of the polygon list.
   for (name in names(polygon_list)) {
 
     # convert data frame to sf object
@@ -89,11 +87,17 @@ extr_rasters <- function(raster,
     # add raster to the list for output in the environment
     masked_raster_list[[name]] <- masked_raster
 
-    # create filenames for local saving when writing the output rasters
-    filename <- file.path(out_dir, paste0("/", name, ".", datatype))
-
-    # writing the rasters to safe them locally
-    writeRaster(masked_raster, filename, overwrite = overwrite)
+    # if specified by the user, save the polygons in a local output folder
+    if(saveLoc == TRUE) {
+      # create a directory to save the polygons if it doesn't exist already
+      if (!dir.exists(out_dir)) {
+        dir.create(out_dir)
+      }
+      # create filenames for local saving when writing the output rasters
+      filename <- file.path(out_dir, paste0("/", name, ".", datatype))
+      # writing the rasters to safe them locally
+      writeRaster(masked_raster, filename, overwrite = overwrite)
+    }
   }
   return(masked_raster_list)
 }

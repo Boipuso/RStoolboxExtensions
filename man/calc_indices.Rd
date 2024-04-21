@@ -18,7 +18,6 @@ calc_indices(raster, indices = c("ndvi", "ndwi"), L = NULL)
 \item{ndbi}{Normalized Difference Built-Up Index}
 \item{ndmi}{Normalized Difference Moisture Index}
 \item{ndsi}{Normalized Difference Snow Index}
-\item{evi}{Enhanced Vegetation Index}
 \item{ewi}{Enhanced Water Index}
 \item{sr}{Simple Ratio}
 \item{savi}{Soil Adjusted Vegetation Index}
@@ -30,8 +29,8 @@ calc_indices(raster, indices = c("ndvi", "ndwi"), L = NULL)
 A raster object with calculated spectral indices added as additional layers.
 }
 \description{
-Calculates specified spectral indices from multispectral raster data.
-Supported indices include NDVI, NDWI, NDBI, and NDMI.
+Calculates spectral indices from multispectral raster data.
+Supported indices include NDVI, NDWI, NDBI, NDMI, NDSI, EWI, SR and SAVI.
 Prerequisite is correct naming for the bands "Blue", Green","Red", "NIR", "SWIR1" and "SWIR2".
 You can use the \code{rename_bands} function to name the bands accordingly.
 }
@@ -42,7 +41,6 @@ This function calculates the specified indices using the following formulas:
 \deqn{NDBI = \frac{SWIR1 - NIR}{SWIR1 + NIR}}
 \deqn{NDMI = \frac{NIR - SWIR1}{NIR + SWIR1}}
 \deqn{NDSI = \frac{Green - Swir1}{Green + Swir1}}
-\deqn{EVI = 2.5 \times \left(\frac{NIR - Red}{NIR + 6 \times Red - 7.5 \times Blue + 1}\right)}
 \deqn{EWI = 2.5 \times \left(\frac{Green - SWIR1}{Green + 2.4 \times SWIR1 + 1}\right)}
 \deqn{SR = \frac{NIR}{Red}}
 \deqn{SAVI = \frac{NIR - Red}{(NIR + Red + L) \times (1 + L)}}
@@ -60,7 +58,7 @@ Sebangau15 <- rast_sample_read(Sebangau15)
 Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
 
 # calculate the indices of your choice
-Sebangau15_indices <- calc_indices(Sebangau15, indices = c("ndvi", "ndbi", "ndmi"))
+Sebangau15_indices <- calc_indices(Sebangau15, indices = c("ndvi", "ndbi", "savi"), L = 0.5)
 
 # checking the results
 names(Sebangau15_indices)

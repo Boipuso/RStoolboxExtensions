@@ -73,11 +73,11 @@ auto_superClass <- function(img,
                             img2 = NULL,
                             train_features,
                             responseCol,
-                            sensor,
-                            subsetting = TRUE,
+                            sensor = NULL,
                             rename_bands = TRUE,
+                            subsetting = TRUE,
                             calc_indices = FALSE,
-                            indices = c("ndvi", "ndwi", "ndbi", "ndmi"),
+                            indices = c("ndvi", "ndwi"),
                             model = "rf",
                             nSamples = 100,
                             nSamplesV = 50,
@@ -96,9 +96,6 @@ auto_superClass <- function(img,
   }
   if (missing(responseCol)) {
     stop("'responseCol' input missing")
-  }
-  if (missing(sensor)) {
-    stop("'sensor' input missing. Please specify the sensor (e.g., 'Landsat8', 'Landsat7', 'Landsat5', or 'Sentinel2').")
   }
 
   # check whether the inputs given are valid

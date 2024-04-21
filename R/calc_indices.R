@@ -1,7 +1,7 @@
 #' Calculate Spectral Indices
 #'
-#' Calculates specified spectral indices from multispectral raster data.
-#' Supported indices include NDVI, NDWI, NDBI, and NDMI.
+#' Calculates spectral indices from multispectral raster data.
+#' Supported indices include NDVI, NDWI, NDBI, NDMI, NDSI, EWI, SR and SAVI.
 #' Prerequisite is correct naming for the bands "Blue", Green","Red", "NIR", "SWIR1" and "SWIR2".
 #' You can use the \code{rename_bands} function to name the bands accordingly.
 #'
@@ -15,7 +15,6 @@
 #'     \item{ndbi}{Normalized Difference Built-Up Index}
 #'     \item{ndmi}{Normalized Difference Moisture Index}
 #'     \item{ndsi}{Normalized Difference Snow Index}
-#'     \item{evi}{Enhanced Vegetation Index}
 #'     \item{ewi}{Enhanced Water Index}
 #'     \item{sr}{Simple Ratio}
 #'     \item{savi}{Soil Adjusted Vegetation Index}
@@ -30,7 +29,6 @@
 #' \deqn{NDBI = \frac{SWIR1 - NIR}{SWIR1 + NIR}}
 #' \deqn{NDMI = \frac{NIR - SWIR1}{NIR + SWIR1}}
 #' \deqn{NDSI = \frac{Green - Swir1}{Green + Swir1}}
-#' \deqn{EVI = 2.5 \times \left(\frac{NIR - Red}{NIR + 6 \times Red - 7.5 \times Blue + 1}\right)}
 #' \deqn{EWI = 2.5 \times \left(\frac{Green - SWIR1}{Green + 2.4 \times SWIR1 + 1}\right)}
 #' \deqn{SR = \frac{NIR}{Red}}
 #' \deqn{SAVI = \frac{NIR - Red}{(NIR + Red + L) \times (1 + L)}}
@@ -48,7 +46,7 @@
 #' Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
 #'
 #' # calculate the indices of your choice
-#' Sebangau15_indices <- calc_indices(Sebangau15, indices = c("ndvi", "ndbi", "ndmi"))
+#' Sebangau15_indices <- calc_indices(Sebangau15, indices = c("ndvi", "ndbi", "savi"), L = 0.5)
 #'
 #' # checking the results
 #' names(Sebangau15_indices)
@@ -72,7 +70,7 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi"), L = NULL) {
   # handle case sensibility of indices input
   indices = tolower(indices)
   # check if all index names are valid
-  valid_indices <- c("ndvi", "ndwi", "ndbi", "ndmi", "ndsi", "evi", "ewi", "sr", "savi")
+  valid_indices <- c("ndvi", "ndwi", "ndbi", "ndmi", "ndsi", "ewi", "sr", "savi")
   invalid_indices <- setdiff(indices, valid_indices)
   # stop and print error message if they are not valid
   if (length(invalid_indices) > 0) {
@@ -135,21 +133,12 @@ calc_indices <- function(raster, indices = c("ndvi", "ndwi"), L = NULL) {
     index_names <- c(index_names, "NDSI")
     message("Done")
   }
-  if ("evi" %in% indices) {
-    if (!all(c("blue", "red", "nir") %in% names(raster))) {
-      stop("Input raster must have 'blue', 'red' and 'nir' bands for EVI calculation.")
-    }
-    message("Calculating EVI ...")
-    index_values$EVI <- 2.5 * ((raster$nir - raster$red) / (raster$nir + 6*raster$red - 7.5*raster$blue + 1))
-    index_names <- c(index_names, "EVI")
-    message("Done")
-  }
   if ("ewi" %in% indices) {
     if (!all(c("green", "swir1") %in% names(raster))) {
       stop("Input raster must have 'green' and 'swir1' bands for EWI calculation.")
     }
     message("Calculating EWI ...")
-    index_values$EWI <- 2.5 * ((raster$green - raster$swir1) / (raster$green + 2.4*raster$swir1 + 1))
+    index_values$EWI <- (2.5 * (raster$green - raster$swir1) / (raster$green + (2.4 * raster$swir1) + 1))
     index_names <- c(index_names, "EWI")
     message("Done")
   }

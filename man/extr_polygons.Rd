@@ -6,6 +6,7 @@
 \usage{
 extr_polygons(
   class_img,
+  saveLoc = TRUE,
   datatype = "gpkg",
   class_col = "class",
   append = FALSE,
@@ -15,25 +16,27 @@ extr_polygons(
 \arguments{
 \item{class_img}{A raster object representing the classified image.}
 
+\item{saveLoc}{Logical indicating whether to store the output polygons in a local folder. Defaults to FALSE:}
+
+\item{datatype}{The format of the output data files. Can be ".shp" for shapefiles or ".gpkg" for GeoPackages. Defaults to ".gpkg".}
+
 \item{class_col}{The name of the column in \code{class_img} containing the class labels. Defaults to "class".}
 
 \item{append}{Logical indicating whether to append to existing data files if they already exist. Defaults to FALSE.}
 
 \item{out_dir}{The directory where the output files will be saved. Defaults to "output_polygons".}
-
-\item{data_format}{The format of the output data files. Can be ".shp" for shapefiles or ".gpkg" for GeoPackages. Defaults to ".gpkg".}
 }
 \value{
 A list of (multi-)polygon sf objects, each representing a landcover class extracted from the classified image.
 }
 \description{
-Extracts landcover classes from a classified image as (multi-)polygons and saves them in a format specified by the user.
+Extracts landcover classes from a classified image as (multi-)polygons and optionally saves them in a format specified by the user.
 }
 \details{
 This function extracts landcover classes from a classified image represented by a raster object.
 It loops over unique class labels in the specified column (\code{class_col}) of the raster and converts each class into a binary raster.
 Then, it converts the binary raster into polygons using the \code{as.polygons} function from the \code{sp} package.
-The polygons are further converted into sf objects using \code{st_as_sf} from the \code{sf} package and saved as shapefiles or GeoPackages in the specified output directory (\code{out_dir}).
+The polygons are further converted into sf objects using \code{st_as_sf} from the \code{sf} package and optionally saved as shapefiles or GeoPackages in the specified output directory (\code{out_dir}).
 The function returns a list of multipolygon sf objects, with each object representing a landcover class.
 }
 \examples{

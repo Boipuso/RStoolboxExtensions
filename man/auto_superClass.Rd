@@ -9,11 +9,11 @@ auto_superClass(
   img2 = NULL,
   train_features,
   responseCol,
-  sensor,
-  subsetting = TRUE,
+  sensor = NULL,
   rename_bands = TRUE,
+  subsetting = TRUE,
   calc_indices = FALSE,
-  indices = c("ndvi", "ndwi", "ndbi", "ndmi"),
+  indices = c("ndvi", "ndwi"),
   model = "rf",
   nSamples = 100,
   nSamplesV = 50,
@@ -31,9 +31,9 @@ auto_superClass(
 
 \item{sensor}{The sensor type of the input raster(s). Used for band renaming and subsetting if specified. Ignored if \code{rename_bands} is FALSE.}
 
-\item{subsetting}{Logical indicating whether to perform subsetting of bands. Ignored if \code{rename_bands} is FALSE. Defaults to TRUE.}
-
 \item{rename_bands}{Logical indicating whether to rename bands based on sensor type. Defaults to TRUE.}
+
+\item{subsetting}{Logical indicating whether to perform subsetting of bands. Ignored if \code{rename_bands} is FALSE. Defaults to TRUE.}
 
 \item{calc_indices}{Logical indicating whether to calculate spectral indices. Defaults to FALSE.}
 

@@ -2,12 +2,13 @@
 % Please edit documentation in R/extr_rasters.R
 \name{extr_rasters}
 \alias{extr_rasters}
-\title{Crops and Masks a Raster to a list of (Multi-)polygons}
+\title{Crops and Masks a Raster to a list of (Multi-)Polygons}
 \usage{
 extr_rasters(
   raster,
   polygon_list,
-  out_dir = "output_masked",
+  saveLoc = FALSE,
+  out_dir = "raster_masked",
   overwrite = TRUE,
   datatype = "tif"
 )
@@ -16,6 +17,8 @@ extr_rasters(
 \item{raster}{A raster object to be cropped and masked to the landcover classes of the \code{polygon_list}.}
 
 \item{polygon_list}{A list of (multi-)polygons, each representing a landcover class.}
+
+\item{saveLoc}{Logical indicating whether to store the masked rasters in a local folder. Defaults to FALSE:}
 
 \item{out_dir}{The directory where the output masked rasters will be saved. Defaults to "output_masked".}
 
@@ -27,7 +30,7 @@ extr_rasters(
 A list of cropped and masked raster objects, each corresponding to an entry of the \code{polygon_list}.
 }
 \description{
-Crops and masks a raster to a list of (multi-)polygons and saves the masked rasters as GeoTIFF or other raster formats.
+Crops and masks a raster to a list of (multi-)polygons and optionally saves the masked rasters as GeoTIFF or other raster formats.
 }
 \examples{
 \dontrun{

@@ -74,6 +74,11 @@ points_superClass <- function(img,
   if (missing(responseCol)) {
     stop("'responseCol' input missing")
   }
+
+  # check if 'class_col' exists in the raster colnames
+  if (!(responseCol %in% names(trainPoints))) {
+    stop("Specified 'responseCol' does not exist in the trainPoints attributes. Please provide a valid column name.")
+  }
   ##############################################################
 
   # set valPoints to NULL if trainPartition is NULL to signalise to the superclass function

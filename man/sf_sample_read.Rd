@@ -21,10 +21,12 @@ This function can be used to load the sample sf data included in the RStoolboxEx
 into your environment. It serves as a demonstration how to retrieve the sf data imbedded in the RStoolboxExtensions package.
 }
 \examples{
+\dontrun{
 # retrieving the file where the sf object is stored and load it
 trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
 trainPoints <- sf_sample_read(trainPoints)
 
 trainPolygons <- system.file("extdata", "trainPolygons.geojson", package = "RStoolboxExtensions")
 trainPolygons <- sf_sample_read(trainPolygons)
+}
 }

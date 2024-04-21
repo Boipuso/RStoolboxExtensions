@@ -1,7 +1,7 @@
 #' Pre-process Training Features for Supervised Classification
 #'
 #' Pre-processes training features to prepare them for a supervised classification using the \code{superClass} command from the RStoolbox package.
-#' The function transforms the training features to a sf object if it wasn't already and reprojects it to the coordinate reference system (CRS) of the raster input.
+#' The function transforms the training features to a sf object if it wasn't already and reprojects it to the CRS of the raster input.
 #'
 #' @param trainFeat Training features, either an sf object or an object that can be converted to an sf object.
 #' @param raster A raster object representing the spatial extent and CRS to which the training features CRS will be aligned.

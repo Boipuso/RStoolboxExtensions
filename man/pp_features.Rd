@@ -16,7 +16,7 @@ A pre-processed sf object of training features aligned with the CRS of the input
 }
 \description{
 Pre-processes training features to prepare them for a supervised classification using the \code{superClass} command from the RStoolbox package.
-The function transforms the training features to a sf object if it wasn't already and reprojects it to the coordinate reference system (CRS) of the raster input.
+The function transforms the training features to a sf object if it wasn't already and reprojects it to the CRS of the raster input.
 }
 \details{
 This function uses \code{sf::st_as_sf()} to convert to a sf object and \code{sf::st_transform()} to align the CRS.

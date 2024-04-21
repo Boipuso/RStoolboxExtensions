@@ -16,12 +16,14 @@
 #' @importFrom sf st_read
 #'
 #' @examples
+#' \dontrun{
 #' # retrieving the file where the sf object is stored and load it
 #' trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
 #' trainPoints <- sf_sample_read(trainPoints)
 #'
 #' trainPolygons <- system.file("extdata", "trainPolygons.geojson", package = "RStoolboxExtensions")
 #' trainPolygons <- sf_sample_read(trainPolygons)
+#' }
 
 sf_sample_read <- function(path) {
   st_read(path)
