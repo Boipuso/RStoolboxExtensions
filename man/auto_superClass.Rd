@@ -75,13 +75,13 @@ Sebangau23 <- system.file("extdata", "Sebangau23.tif", package = "RStoolboxExten
 Sebangau23 <- rast_sample_read(Sebangau23)
 
 # read sample sf file of the RStoolboxExtensions package
-trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
-trainPoints <- sf_sample_read(trainPoints)
+trainPolygons <- system.file("extdata", "trainPolygons.geojson", package = "RStoolboxExtensions")
+trainPolygons <- sf_sample_read(trainPolygons)
 
 # apply the function
 asC_output <- auto_superClass(img = Sebangau15,
                               img2 = Sebangau23,
-                              train_features = trainPoints,
+                              train_features = trainPolygons,
                               responseCol = "landcover",
                               sensor = "Landsat8",
                               calc_indices = TRUE,

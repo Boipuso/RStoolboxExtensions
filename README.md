@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# RStoolboxExtensions
+## RStoolboxExtensions
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -31,8 +31,7 @@ example we use the sample data of this package for the Sebangau
 Nationalpark in Borneo. You can use the sample_read functions to load
 the sample data from this package. The help documents of the sample_read
 functions provide everything you need to know abou the sample data and
-how to access it. !!! sample data is currently not integrated in the
-package !!!
+how to access it.
 
 ``` r
 # load the package
@@ -46,15 +45,15 @@ library(RStoolboxExtensions)
  Sebangau23 <- rast_sample_read(Sebangau23)
 
  # read sample sf file of the RStoolboxExtensions package
- trainPoints <- system.file("extdata", "trainPoints.geojson", package = "RStoolboxExtensions")
- trainPoints <- sf_sample_read(trainPoints)
-#> Reading layer `trainPoints' from data source 
-#>   `C:\Users\henni\AppData\Local\R\win-library\4.3\RStoolboxExtensions\extdata\trainPoints.geojson' 
+ trainPolygons <- system.file("extdata", "trainPolygons.geojson", package = "RStoolboxExtensions")
+ trainPolygons <- sf_sample_read(trainPolygons)
+#> Reading layer `trainPolygons' from data source 
+#>   `C:\Users\henni\AppData\Local\R\win-library\4.3\RStoolboxExtensions\extdata\trainPolygons.geojson' 
 #>   using driver `GeoJSON'
-#> Simple feature collection with 200 features and 2 fields
-#> Geometry type: POINT
+#> Simple feature collection with 80 features and 2 fields
+#> Geometry type: POLYGON
 #> Dimension:     XY
-#> Bounding box:  xmin: 113.3583 ymin: -3.128037 xmax: 114.0899 ymax: -2.074168
+#> Bounding box:  xmin: 113.4024 ymin: -2.702268 xmax: 113.4924 ymax: -2.625239
 #> Geodetic CRS:  WGS 84
 ```
 
@@ -64,8 +63,17 @@ assignment.
 
 ``` r
 # check the colnames of the training features
-names(trainPoints)
+names(trainPolygons)
 #> [1] "id"        "landcover" "geometry"
+```
+
+It’s a good idea to change the landcover the descriptions to meaningful
+characters.
+
+``` r
+# reassigning the landcover values to be a character description of the class instead of numerical values
+  landcover <- c('forest','nonforest','afforestation','deforestation')
+  trainPolygons$landcover <- landcover[trainPolygons$landcover]
 ```
 
 You can now use the ‘auto_superClass()’ function to automate the raster
@@ -82,22 +90,25 @@ training features and the raster(s) cover the same area and check your
 preferred settings.
 
 ``` r
+# it's good practice to set a seed for reproducability
+set.seed(123)
+
 # specify your input features
 # here we choose that we do want to rename and subset the bands (renaming the bands is prerequisite #for calculating indices) and also we want to calculate the indices NDVI and NDWI to improve our #classification results
 asC <- auto_superClass(img = Sebangau15, 
                        img2 = Sebangau23, 
-                       train_features = trainPoints,
+                       train_features = trainPolygons,
                        responseCol = "landcover", 
                        rename_bands = TRUE, 
                        subsetting = TRUE, 
                        sensor = "Landsat8", 
                        calc_indices = TRUE, 
-                       indices = c("ndvi", "ndmi"),
+                       indices = c("ndvi", "savi"),
+                       L = 0.5,
                        trainPartition = 0.66
                        )
 #> Warning: Paket 'caret' wurde unter R Version 4.3.2 erstellt
-#> Warning: Paket 'ggplot2' wurde unter R Version 4.3.2 erstellt
-#> |---------|---------|---------|---------|=========================================                                          
+#> Warning: Paket 'ggplot2' wurde unter R Version 4.3.3 erstellt
 ```
 
 You should receive an output list containing 4 elements including the
@@ -128,7 +139,7 @@ sensible.
 accuracy
 #> [[1]]
 #>   TrainAccuracy TrainKappa method
-#> 1     0.9512315  0.9347902     rf
+#> 1     0.9658384  0.9456681     rf
 #> 
 #> [[2]]
 #> Cross-Validated (5 fold) Confusion Matrix 
@@ -137,12 +148,12 @@ accuracy
 #>  
 #>                Reference
 #> Prediction      afforestation deforestation forest nonforest
-#>   afforestation           7.0           0.0    0.0       0.0
-#>   deforestation           0.0           6.2    0.4       0.0
-#>   forest                  0.0           0.4    6.6       0.0
-#>   nonforest               0.4           0.2    0.0       7.4
-#>                            
-#>  Accuracy (average) : 0.951
+#>   afforestation          46.2           1.0    0.0       0.0
+#>   deforestation           1.0          10.8    0.0       0.0
+#>   forest                  0.0           0.0   35.0       1.2
+#>   nonforest               0.0           0.0    0.2       4.2
+#>                             
+#>  Accuracy (average) : 0.9659
 ```
 
 You can also check whether your raster was truly subsetted by calling
@@ -153,8 +164,8 @@ function.
 ``` r
 names(pp_raster)
 #>  [1] "Blue"    "Green"   "Red"     "NIR"     "SWIR1"   "SWIR2"   "NDVI"   
-#>  [8] "NDMI"    "Blue_2"  "Green_2" "Red_2"   "NIR_2"   "SWIR1_2" "SWIR2_2"
-#> [15] "NDVI_2"  "NDMI_2"
+#>  [8] "SAVI"    "Blue_2"  "Green_2" "Red_2"   "NIR_2"   "SWIR1_2" "SWIR2_2"
+#> [15] "NDVI_2"  "SAVI_2"
 ```
 
 Let’s verify whether the indices were calculated correctly by plotting
@@ -169,18 +180,35 @@ terra::plot(pp_raster$NDVI)
 When you are happy with the results, you can extract your landcover
 classes as (multi-)polygons and optionally store them locally for
 further processing in another software using the extr_polygons()
-function.
+function. Make sure to specify saveLoc = TRUE to export the output
+polygons.
 
 ``` r
-polygon_list <- extr_polygons(class_img, saveLoc = TRUE, datatype = "gpkg", out_dir = "myPolygons")
+polygon_list <- extr_polygons(class_img, saveLoc = FALSE, datatype = "gpkg", out_dir = "myPolygons")
 ```
+
+Let’s plot a polygon layer to validate the results.
+
+``` r
+terra::plot(polygon_list$forest)
+```
+
+<img src="man/figures/README-plotting polygon-1.png" width="100%" />
 
 You can further use the extr_rasters() function to crop and mask a
 raster to the (multi-)polygon list you received from extr_polygons().
 The output will be cropped and masked rasters for every list entry of
 the (multi-)polygon list and optionally exported to a directory of your
-choice.
+choice. Again, choose saveLoc = TRUE for exporting.
 
 ``` r
-masked_rasters <- extr_rasters(Sebangau15, polygon_list, saveLoc = TRUE, datatype = "tif", out_dir = "myRasters")
+masked_rasters <- extr_rasters(Sebangau15, polygon_list, saveLoc = FALSE, datatype = "tif", out_dir = "myRasters")
 ```
+
+Let’s plot a polygon layer to validate the results.
+
+``` r
+terra::plot(masked_rasters$forest)
+```
+
+<img src="man/figures/README-plotting masked raster-1.png" width="100%" />
