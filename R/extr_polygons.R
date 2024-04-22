@@ -89,10 +89,10 @@ extr_polygons <- function(class_img,
       # create a directory to save the polygons if it doesn't exist already
       if (!dir.exists(out_dir)) {
         dir.create(out_dir)
-        }
+      }
       file_name <- paste0(out_dir,"/", as.character(value),".", datatype)
       st_write(sf_polygons, file_name, append = append)
-      }
+    }
   }
 
   return(polygons_list)
