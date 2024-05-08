@@ -39,7 +39,10 @@
 #' subset_Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
 #'
 #' # train model with data partitioning
-#' superClass <- points_superClass(subset_Sebangau15, pp_trainPoints, "landcover", trainPartition = 0.66)
+#' superClass <- points_superClass(subset_Sebangau15,
+#'                                 pp_trainPoints,
+#'                                 "landcover",
+#'                                 trainPartition = 0.66)
 #'
 #' # checking the output
 #' names(superClass)
@@ -90,9 +93,9 @@ points_superClass <- function(img,
 
   # split features between training and validation features if trainPartition is not NULL
   else {
-    trainPoints$random <- runif(nrow(trainPoints))
-    in_trainPoints <- subset(trainPoints, random < trainPartition)
-    valPoints <- subset(trainPoints, random >= trainPartition)
+    trainPoints$split <- runif(nrow(trainPoints))
+    in_trainPoints <- subset(trainPoints, split < trainPartition)
+    valPoints <- subset(trainPoints, split >= trainPartition)
   }
 
   # train the model using the superClass function from the RStoolbox

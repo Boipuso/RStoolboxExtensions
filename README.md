@@ -130,7 +130,7 @@ Let’s plot the classified raster.
 terra::plot(class_img)
 ```
 
-<img src="man/figures/README-plotting classified raster-1.png" width="100%" />
+<img src="man/figures/README-class_img-1.png" width="100%" />
 
 And check the validation of the model to make sure the results are
 sensible.
@@ -175,7 +175,7 @@ the NDVI
 terra::plot(pp_raster$NDVI)
 ```
 
-<img src="man/figures/README-plotting ndvi-1.png" width="100%" />
+<img src="man/figures/README-ndvi-1.png" width="100%" />
 
 When you are happy with the results, you can extract your landcover
 classes as (multi-)polygons and optionally store them locally for
@@ -193,7 +193,7 @@ Let’s plot a polygon layer to validate the results.
 terra::plot(polygon_list$forest)
 ```
 
-<img src="man/figures/README-plotting polygon-1.png" width="100%" />
+<img src="man/figures/README-polygon-1.png" width="100%" />
 
 You can further use the extr_rasters() function to crop and mask a
 raster to the (multi-)polygon list you received from extr_polygons().
@@ -211,4 +211,4 @@ Let’s plot a polygon layer to validate the results.
 terra::plot(masked_rasters$forest)
 ```
 
-<img src="man/figures/README-plotting masked raster-1.png" width="100%" />
+<img src="man/figures/README-masked_raster-1.png" width="100%" />

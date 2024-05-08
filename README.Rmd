@@ -102,7 +102,7 @@ pp_raster <- asC$pp_raster
 
 Let's plot the classified raster.
 
-```{r plotting classified raster}
+```{r class_img}
 terra::plot(class_img)
 ```
 
@@ -120,7 +120,7 @@ names(pp_raster)
 
 Let's verify whether the indices were calculated correctly by plotting the NDVI
 
-```{r plotting ndvi}
+```{r ndvi}
 terra::plot(pp_raster$NDVI)
 ```
 
@@ -132,7 +132,7 @@ polygon_list <- extr_polygons(class_img, saveLoc = FALSE, datatype = "gpkg", out
 
 Let's plot a polygon layer to validate the results.
 
-```{r plotting polygon}
+```{r polygon}
 terra::plot(polygon_list$forest)
 
 ```
@@ -145,7 +145,7 @@ masked_rasters <- extr_rasters(Sebangau15, polygon_list, saveLoc = FALSE, dataty
 
 Let's plot a polygon layer to validate the results.
 
-```{r plotting masked raster}
+```{r masked_raster}
 terra::plot(masked_rasters$forest)
 
 ```

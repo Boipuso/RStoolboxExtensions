@@ -73,7 +73,10 @@ pp_trainPoints <- pp_features(trainPoints, Sebangau15)
 subset_Sebangau15 <- rename_bands(Sebangau15, sensor = "Landsat8", subsetting = TRUE)
 
 # train model with data partitioning
-superClass <- points_superClass(subset_Sebangau15, pp_trainPoints, "landcover", trainPartition = 0.66)
+superClass <- points_superClass(subset_Sebangau15,
+                                pp_trainPoints,
+                                "landcover",
+                                trainPartition = 0.66)
 
 # checking the output
 names(superClass)

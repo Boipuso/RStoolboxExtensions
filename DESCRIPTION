@@ -1,5 +1,5 @@
 Package: RStoolboxExtensions
-Title: Functions to Pre- and Postprocess Supervised Classifications
+Title: Functions to Pre- and Post-process Supervised Classifications
 Version: 0.0.0.9000
 Authors@R: 
     person("Henning", "Riecken", , "henning.riecken@stud-mail.uni-wuerzburg.de", role = c("aut", "cre"),
@@ -17,12 +17,9 @@ BugReports: https://github.com/Boipuso/RStoolboxExtensions/issues
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
-VignetteBuilder: knitr
 Imports: 
     terra,
     sf,
     RStoolbox,
-    caret,
-    dplyr
-Config/testthat/edition: 3
+    stats
+
